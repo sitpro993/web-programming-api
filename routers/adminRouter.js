@@ -40,8 +40,8 @@ adminRouter.post("/signin", async (req, res) => {
         email: user.email,
       },
     });
-  } catch (err) {
-    return res.status(500).json({ err: err.message });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
   }
 });
 

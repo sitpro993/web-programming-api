@@ -9,6 +9,30 @@ const productRouter = express.Router();
 
 // api/products/:slug/edit
 
+// api/products/hot
+productRouter.get("/hot", async (req, res) => {
+  try {
+    const products = await Products.find({})
+      .limit(req.query.limit)
+      .sort("-sold");
+    res.json(products);
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
+  }
+});
+
+// api/products/newProduct
+productRouter.get("/newProduct", async (req, res) => {
+  try {
+    const products = await Products.find({})
+      .limit(req.query.limit)
+      .sort("-createdAt");
+    res.json(products);
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
+  }
+});
+
 // /api/products/:slug
 productRouter.get("/:slug", async (req, res) => {
   try {
@@ -16,8 +40,8 @@ productRouter.get("/:slug", async (req, res) => {
     if (!product)
       return res.status(400).json({ err: "This product does not exist." });
     res.json({ product });
-  } catch (err) {
-    return res.status(500).json({ err: err.message });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
   }
 });
 
@@ -29,8 +53,8 @@ productRouter.get("/", async (req, res) => {
     res.json({
       products,
     });
-  } catch (err) {
-    return res.status(500).json({ err: err.message });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
   }
 });
 

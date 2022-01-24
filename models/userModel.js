@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+    image: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/beeyou/image/upload/v1641721299/logo/avatar7_jkzd2h.png",
+    },
+
     phone: { type: String, default: "" },
     address: { type: Array, default: [] },
     totalOrders: { type: Number, default: 0 },

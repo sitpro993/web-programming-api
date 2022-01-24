@@ -10,7 +10,7 @@ import cors from "cors";
 //config express
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extension: true }));
+// app.use(express.urlencoded({ extension: true }));
 
 //connect database
 connectDB();

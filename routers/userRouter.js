@@ -39,8 +39,8 @@ userRouter.get("/accessToken", async (req, res) => {
         address: user.address,
       },
     });
-  } catch (err) {
-    return res.status(500).json({ err: err.message });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
   }
 });
 
@@ -76,8 +76,8 @@ userRouter.post("/signin", async (req, res) => {
         email: user.email,
       },
     });
-  } catch (err) {
-    return res.status(500).json({ err: err.message });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
   }
 });
 
@@ -150,11 +150,26 @@ userRouter.patch("/profile/edit", async (req, res) => {
   try {
     const result = await auth(req, res);
     if (result.id) {
-      const user = await Users.findByIdAndUpdate(result.id, req.body, {
-        new: true,
-      });
+      const user = await Users.findByIdAndUpdate(
+        result.id,
+        {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          phone: req.body.phone,
+        },
+        {
+          new: true,
+        }
+      );
 
-      res.json(user); //
+      res.json({
+        msg: "Thay đổi thành công",
+        user: {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          phone: req.body.phone,
+        },
+      }); //
     }
   } catch (error) {
     return res.status(500).json({ err: error.message });
@@ -172,7 +187,6 @@ userRouter.get("/profile", async (req, res) => {
         "email",
         "phone",
         "address",
-        "-_id",
       ]);
       if (user) {
         res.send(user);

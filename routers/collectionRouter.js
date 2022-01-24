@@ -51,8 +51,8 @@ collectionRouter.get("/:slug", async function (req, res) {
       category,
       page,
     });
-  } catch (err) {
-    return res.status(500).json({ err: err.message });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
   }
 });
 
@@ -64,8 +64,8 @@ collectionRouter.get("/", async function (req, res) {
     res.json({
       categories,
     });
-  } catch (err) {
-    return res.status(500).json({ err: err.message });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
   }
 });
 
