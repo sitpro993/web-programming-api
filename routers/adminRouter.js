@@ -109,8 +109,11 @@ adminRouter.get("/statistical", async (req, res) => {
     const countUser = await Users.count();
     const countProduct = await Products.count();
     const countOrder = await Orders.count();
-    //const orders = await Orders.find({ isDelivered: true, isPaid: true }).select([
-    const orders = await Orders.find({}).select([
+    const orders = await Orders.find({
+      isDelivered: true,
+      isPaid: true,
+    }).select([
+      //const orders = await Orders.find({}).select([
       "totalPrice",
       "-_id",
       "shippingPrice",
