@@ -1,11 +1,24 @@
 import express from "express";
 import Categories from "../models/categoryModel.js";
+import Products from "../models/productModel.js";
 
 const collectionRouter = express.Router();
 
 // / api/collections/delete
 
 // api/collections/create
+collectionRouter.post("/create", async function (req, res) {
+  try {
+    const { title, slug } = req.body;
+
+    const newCategory = new Categories({ title, slug });
+
+    await newCategory.save();
+    res.status(200).json({ success: "Tạo danh mục thành công" });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
+  }
+});
 
 // api/collections/:slug/edit
 
@@ -38,18 +51,16 @@ collectionRouter.get("/:slug", async function (req, res) {
     }
     const category = await Categories.findOne({
       slug: req.params.slug,
-    }).populate({
-      path: "product",
-      options: {
-        limit,
-        skip,
-        sort: sortParams,
-      },
     });
+
+    const products = await Products.find({
+      checked: true,
+      "category.slug": category.slug,
+    }).sort(sortParams);
 
     res.json({
       category,
-      page,
+      products,
     });
   } catch (error) {
     return res.status(500).json({ err: error.message });
@@ -59,7 +70,7 @@ collectionRouter.get("/:slug", async function (req, res) {
 // /api/collections/
 collectionRouter.get("/", async function (req, res) {
   try {
-    const categories = await Categories.find();
+    const categories = await Categories.find().select(["title", "_id", "slug"]);
 
     res.json({
       categories,

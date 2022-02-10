@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
-    slug: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
     price: {
       type: Number,
       required: true,
@@ -28,17 +28,20 @@ const productSchema = new mongoose.Schema(
     },
     size: { type: Array },
     category: {
-      type: Array,
+      type: Object,
       required: true,
     },
+    tag: { type: Array },
     checked: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     sold: {
       type: Number,
       default: 0,
     },
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null },
   },
 
   { timestamps: true }

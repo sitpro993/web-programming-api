@@ -204,6 +204,10 @@ userRouter.get("/", async (req, res) => {
   try {
     const users = await Users.find({}).select("-password");
     if (users) {
+      for (let i = 0; i < users.length; i++) {
+ co
+      }
+     
       res.send(users);
     } else {
       res.status(404).send({ message: "Data rỗng" });
