@@ -2,7 +2,6 @@ import express from "express";
 import { auth } from "../middleware/auth.js";
 import Orders from "../models/orderModel.js";
 import Products from "../models/productModel.js";
-import Users from "../models/userModel.js";
 
 const orderRouter = express.Router();
 
@@ -22,6 +21,7 @@ orderRouter.post("/create", async (req, res) => {
         shippingPrice: req.body.shippingPrice,
         totalPrice: req.body.totalPrice,
         //payMethod: req.body.payMethod,
+
         deliveryMethod: req.body.deliveryMethod,
       });
       await newOrder.save();
