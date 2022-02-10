@@ -109,13 +109,17 @@ productRouter.patch("/nonActive", async (req, res) => {
   }
 });
 
+function jsUcfirst(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 // api/products/create
 productRouter.post("/create", async (req, res) => {
   try {
     const product = req.body.product;
 
     const newProduct = new Products({
-      title: product.title,
+      title: jsUcfirst(product.title),
       slug: product.slug,
       price: product.price,
       description: product.description,
@@ -140,7 +144,7 @@ productRouter.patch("/edit", async (req, res) => {
     const product = req.body.product;
 
     const data = await Products.findByIdAndUpdate(product._id, {
-      title: product.title,
+      title: jsUcfirst(product.title),
       slug: product.slug,
       price: product.price,
       description: product.description,
