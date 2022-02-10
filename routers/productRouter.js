@@ -119,7 +119,7 @@ productRouter.post("/create", async (req, res) => {
     const product = req.body.product;
 
     const newProduct = new Products({
-      title: jsUcfirst(product.title),
+      title: product.title,
       slug: product.slug,
       price: product.price,
       description: product.description,
@@ -144,7 +144,7 @@ productRouter.patch("/edit", async (req, res) => {
     const product = req.body.product;
 
     const data = await Products.findByIdAndUpdate(product._id, {
-      title: jsUcfirst(product.title),
+      title: product.title,
       slug: product.slug,
       price: product.price,
       description: product.description,

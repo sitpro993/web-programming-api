@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import express from "express";
 import AdminUsers from "../models/adminUserModel.js";
 import Users from "../models/userModel.js";
+import Categories from "../models/categoryModel.js";
 import Products from "../models/productModel.js";
 import Orders from "../models/orderModel.js";
 import { createToken } from "../utils/generateToken.js";
@@ -77,21 +78,51 @@ adminRouter.post("/signin", async (req, res) => {
   }
 });
 
+//api/admin/statisticalOrders
+adminRouter.get("/statisticalOrders", async (req, res) => {
+  try {
+    let data = [];
+    const categories = await Categories.find({})
+      .cursor()
+      .eachAsync(async function (category) {
+        const products = await Products.find({
+          checked: true,
+          "category.title": category.title,
+        });
+
+        const count = products.reduce((prev, item) => {
+          return prev + item.sold;
+        }, 0);
+
+        data.push({ title: category.title, count: count });
+      });
+
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
+  }
+});
+
 //api/admin/statistical
 adminRouter.get("/statistical", async (req, res) => {
-  const countUser = await Users.count();
-  const countProduct = await Products.count();
-  const countOrder = await Orders.count();
-  const orders = await Orders.find({ isDelivered: true, isPaid: true }).select([
-    "totalPrice",
-    "-_id",
-    "shippingPrice",
-  ]);
-  const totalIncome = orders.reduce((prev, item) => {
-    return prev + (item.totalPrice - item.shippingPrice);
-  }, 0);
+  try {
+    const countUser = await Users.count();
+    const countProduct = await Products.count();
+    const countOrder = await Orders.count();
+    //const orders = await Orders.find({ isDelivered: true, isPaid: true }).select([
+    const orders = await Orders.find({}).select([
+      "totalPrice",
+      "-_id",
+      "shippingPrice",
+    ]);
+    const totalIncome = orders.reduce((prev, item) => {
+      return prev + (item.totalPrice - item.shippingPrice);
+    }, 0);
 
-  res.json({ countOrder, countProduct, countUser, totalIncome });
+    res.json({ countOrder, countProduct, countUser, totalIncome });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
+  }
 });
 
 // /api/admin/:id/edit

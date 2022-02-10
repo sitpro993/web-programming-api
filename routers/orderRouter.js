@@ -8,15 +8,6 @@ const orderRouter = express.Router();
 
 // /api/orders/delete
 
-const sold = async (id, quantity, sold) => {
-  console.log("item:", id, quantity, sold);
-  await Products.findOneAndUpdate(
-    { _id: id },
-    {
-      sold: sold + quantity,
-    }
-  );
-};
 // /api/orders/create
 orderRouter.post("/create", async (req, res) => {
   try {
@@ -35,15 +26,26 @@ orderRouter.post("/create", async (req, res) => {
       });
       await newOrder.save();
 
-      req.body.cart.filter((item) => {
-        console.log(item);
-        return sold(item._id, item.quantity, item.sold);
+      req.body.cart.forEach(async (item) => {
+        await Products.findByIdAndUpdate(item._id, {
+          sold: item.sold + item.quantity,
+        });
       });
 
       res.json({
         msg: "Đơn hàng đã được tạo",
       });
     }
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
+  }
+});
+
+orderRouter.get("/createdAt", async (req, res) => {
+  try {
+    const orders = await Orders.find({}).sort("-createdAt").limit(6);
+
+    res.status(200).json({ orders });
   } catch (error) {
     return res.status(500).json({ err: error.message });
   }
@@ -56,6 +58,9 @@ orderRouter.post("/create", async (req, res) => {
 // /api/orders/
 orderRouter.get("/", async (req, res) => {
   try {
+    const orders = await Orders.find({});
+
+    res.status(200).json({ orders });
   } catch (error) {
     return res.status(500).json({ err: error.message });
   }

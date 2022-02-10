@@ -202,15 +202,29 @@ userRouter.get("/profile", async (req, res) => {
 // api/users/
 userRouter.get("/", async (req, res) => {
   try {
-    const users = await Users.find({}).select("-password");
-    if (users) {
-      for (let i = 0; i < users.length; i++) {
- co
-      }
-     
-      res.send(users);
+    let data = [];
+
+    await Users.find()
+      .cursor()
+      .eachAsync(async function (user) {
+        const orders = await Orders.find({ userId: user._id });
+        const totalIncome = orders.reduce((prev, item) => {
+          return prev + (item.totalPrice - item.shippingPrice);
+        }, 0);
+        const totalOrders = orders.length;
+        data.push({
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          totalIncome,
+          totalOrders,
+        });
+      });
+
+    if (data.length > 0) {
+      return res.status(200).json({ data });
     } else {
-      res.status(404).send({ message: "Data rỗng" });
+      return res.status(201).json({ msg: "Data rỗng" });
     }
   } catch (error) {
     return res.status(500).json({ err: error.message });
